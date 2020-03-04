@@ -1,0 +1,20 @@
+<html>
+    <head>
+        <script>
+            var xhr =new XMLHttpRequest();
+            xhr.open("GET", "http://localhost:80/phpServer/api.php", true);
+
+            xhr.onload = function(){
+                document.getElementById("risposta").innerHTML=xhr.response;
+            };
+            xhr.onerror = function(){
+                alert("Bau!");
+            };
+            xhr.send();
+        </script>
+    </head>
+    <body>
+        <h1>Risposta</h1>
+        <div id="risposta"></div>
+    </body>
+</html>
