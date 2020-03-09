@@ -2,7 +2,7 @@
     <head>
         <script>
             var xhr =new XMLHttpRequest();
-            xhr.open("GET", "http://localhost:80/phpServer/api.php", true);
+            xhr.open("PUT", "http://localhost:80/phpServer/api.php/1486", true);
 
             xhr.onload = function(){
                 document.getElementById("risposta").innerHTML=xhr.response;
@@ -10,7 +10,7 @@
             xhr.onerror = function(){
                 alert("Bau!");
             };
-            xhr.send();
+            xhr.send(JSON.stringify({"name":"assd", "surname":"mucafasfj", "sidicode": "3344", "taxcode":"72712"}));
         </script>
     </head>
     <body>
