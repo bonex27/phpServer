@@ -42,7 +42,7 @@ switch($requestMethod) {
         header('Content-Type: application/json');
 		echo $js_encode;
         break;
-    case 'DELETE':
+    case 'DELETE'://ok
         $pathArray = explode('/', $_SERVER['REQUEST_URI']);
         if(isset($pathArray[3]))
            { 
@@ -56,7 +56,7 @@ switch($requestMethod) {
     case 'PATCH':
         //TODO patch json_decode
         break;
-    case 'PUT':
+    case 'PUT'://ok
         $pathArray = explode('/', $_SERVER['REQUEST_URI']);
         if(!isset($pathArray[3]))
                echo "Errore!";
@@ -69,12 +69,26 @@ switch($requestMethod) {
             $inputJSON = file_get_contents('php://input');
             $input = json_decode($inputJSON, TRUE);
 
-            $student->_name = $input["name"];
-            $student->_surname = $input["surname"];
-            $student->_sidiCode = $input["sidicode"];
-            $student->_taxCode = $input["taxcode"];
+            if(isset($input["name"]))
+                $student->_name = $input["name"];
+            else    
+                $classes->_name = null;
 
-            echo $student->patch();
+            if(isset($input["surname"]))
+                $student->_surname = $input["surname"];
+            else    
+                $classes->_surname = null;
+
+            if(isset($input["sidicode"]))
+                $student->_sidiCode = $input["sidicode"];
+            else    
+                $classes->_sidiCode = null;
+            if(isset($input["taxCode"]))
+                $student->_taxCode = $input["taxcode"];
+            else    
+                $classes->_taxCode = null;
+
+            echo $student->put();
             
          }
         break;

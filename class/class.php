@@ -7,15 +7,12 @@
  */
  
 include("DBConnection.php");
-class Student 
+class classes 
 {
     protected $db;
     public $_id;
-    public $_name;
-    public $_surname;
-    public $_sidiCode;
-    public $_taxCode;
- 
+    public $_year;
+    public $_section;
     public function __construct() {
         $this->db = new DBConnection();
         $this->db = $this->db->returnConnection();
@@ -27,12 +24,11 @@ class Student
 		Nella prima parte esegue l' aggiunta del nuovo studente
 		*/
 		try {
-    		$sql = 'INSERT INTO student (name, surname, sidi_Code, tax_Code)  VALUES (:name, :surname, :sidiCode, :taxCode)';
+            //modificare la query per l' aggiunta delle classi
+    		$sql = 'INSERT INTO class (year, section)  VALUES (:year, :section)';
     		$data = [
-			    'name' => $this->_name,
-			    'surname' => $this->_surname,
-			    'sidiCode' => $this->_sidiCode,
-			    'taxCode' => $this->_taxCode,
+			    'year' => $this->_year,
+			    'section' => $this->_section,
 			];
 	    	$stmt = $this->db->prepare($sql);
 	    	$stmt->execute($data);
@@ -47,10 +43,10 @@ class Student
 		Nella seconda parte esegue la visualizzazione del nuovo studente
 		*/
 		try {
-    		$sql = "SELECT * FROM student WHERE sidi_Code=:sidiCode";
+    		$sql = "SELECT * FROM class WHERE section=:section";
 		    $stmt = $this->db->prepare($sql);
 		    $data = [
-		    	'sidiCode' => $this->_sidiCode
+		    	'section' => $this->_section,
 			];
 		    $stmt->execute($data);
 		    $result = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -64,7 +60,7 @@ class Student
     // getAll 
     public function list() {
     	try {
-    		$sql = "SELECT * FROM student";
+    		$sql = "SELECT * FROM class";
 		    $stmt = $this->db->prepare($sql);
  
 		    $stmt->execute();
@@ -78,7 +74,7 @@ class Student
     // getOne
     public function one() {
     	try {
-    		$sql = "SELECT * FROM student WHERE id=:id";
+    		$sql = "SELECT * FROM class WHERE id=:id";
 		    $stmt = $this->db->prepare($sql);
 		    $data = [
 		    	'id' => $this->_id
@@ -94,7 +90,7 @@ class Student
     // delete TODO
     public function delete() {
 		try {
-    		$sql = "DELETE FROM student WHERE id= :id";
+    		$sql = "DELETE FROM class WHERE id= :id";
 		    $stmt = $this->db->prepare($sql);
 		    $data = [
 		    	'id' => $this->_id
@@ -109,15 +105,16 @@ class Student
     // put TODO
     public function put() {
 		try {
-    		$sql = "UPDATE student SET name = :name, surname = :surname, sidi_Code = :sidiCode, tax_Code = :taxCode WHERE id = :id";
+
+            //modificare per class
+    		$sql = "UPDATE class SET year = :year, section = :section WHERE id = :id";
 		    $stmt = $this->db->prepare($sql);
-		    $data = [
-				'id' => $this->_id,
-			    'name' => $this->_name,
-			    'surname' => $this->_surname,
-			    'sidiCode' => $this->_sidiCode,
-			    'taxCode' => $this->_taxCode,
-			];
+
+				$data = [
+                    'id' => $this->_id,
+                    'year' => $this->_year,
+                    'section' => $this->_section,
+                ];
 		    $stmt->execute($data);
 		    return "Ok";
 		} catch (Exception $e) {
