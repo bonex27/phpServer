@@ -52,7 +52,33 @@ switch($requestMethod) {
             echo "Errore!";
         break;
     case 'PATCH':
-        //TODO patch json_decode
+        $pathArray = explode('/', $_SERVER['REQUEST_URI']);
+        if(!isset($pathArray[3]))
+               echo "Errore!";
+        else
+         {   
+            $id = $pathArray[3];
+            $classes->_id = $id;
+
+            //Ottiene il  json dalla richiesta
+            $inputJSON = file_get_contents('php://input');
+            $input = json_decode($inputJSON, TRUE);
+
+            if(isset($input["year"]))
+                $classes->_year = $input["year"];
+            else    
+                $classes->_year = null;
+
+            if(isset($input["section"]))
+                $classes->_section = $input["section"];
+            else    
+                $classes->_section = null;
+
+            
+
+            echo $classes ->patch();
+            
+         }
         break;
     case 'PUT':
         $pathArray = explode('/', $_SERVER['REQUEST_URI']);

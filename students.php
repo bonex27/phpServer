@@ -54,7 +54,41 @@ switch($requestMethod) {
             echo "Errore!";
         break;
     case 'PATCH':
-        //TODO patch json_decode
+        $pathArray = explode('/', $_SERVER['REQUEST_URI']);
+        if(!isset($pathArray[3]))
+               echo "Errore!";
+        else
+         {   
+            $id = $pathArray[3];
+            $student->_id = $id;
+
+            //Ottiene il  json dalla richiesta
+            $inputJSON = file_get_contents('php://input');
+            $input = json_decode($inputJSON, TRUE);
+
+            if(isset($input["name"]))
+                $student->_name = $input["name"];
+            else    
+                $student->_name = null;
+
+            if(isset($input["surname"]))
+                $student->_surname = $input["surname"];
+            else    
+                $student->_surname = null;
+
+            if(isset($input["sidiCode"]))
+                $student->_sidiCode = $input["sidiCode"];
+            else    
+                $student->_sidiCode = null;
+
+            if(isset($input["taxCode"]))
+                $student->_taxCode = $input["taxCode"];
+            else    
+                $student->_taxCode = null;
+
+            echo $student->patch();
+            
+         }
         break;
     case 'PUT'://ok
         $pathArray = explode('/', $_SERVER['REQUEST_URI']);
@@ -72,21 +106,22 @@ switch($requestMethod) {
             if(isset($input["name"]))
                 $student->_name = $input["name"];
             else    
-                $classes->_name = null;
+                $student->_name = null;
 
             if(isset($input["surname"]))
                 $student->_surname = $input["surname"];
             else    
-                $classes->_surname = null;
+                $student->_surname = null;
 
-            if(isset($input["sidicode"]))
-                $student->_sidiCode = $input["sidicode"];
+            if(isset($input["sidiCode"]))
+                $student->_sidiCode = $input["sidiCode"];
             else    
-                $classes->_sidiCode = null;
+                $student->_sidiCode = null;
+
             if(isset($input["taxCode"]))
-                $student->_taxCode = $input["taxcode"];
+                $student->_taxCode = $input["taxCode"];
             else    
-                $classes->_taxCode = null;
+                $student->_taxCode = null;
 
             echo $student->put();
             

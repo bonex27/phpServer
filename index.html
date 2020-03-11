@@ -1,20 +1,26 @@
 <html>
-    <head>
-        <script>
-            var xhr =new XMLHttpRequest();
-            xhr.open("PUT", "http://localhost:80/phpServer/classes.php", true);
 
-            xhr.onload = function(){
-                document.getElementById("risposta").innerHTML=xhr.response;
-            };
-            xhr.onerror = function(){
-                alert("Bau!");
-            };
-            xhr.send(JSON.stringify({"year":"2003", "surname":"mucafasfj", "sidicode": "3344", "taxcode":"72712"}));
-        </script>
-    </head>
-    <body>
-        <h1>Risposta</h1>
-        <div id="risposta"></div>
-    </body>
+<head>
+    <script>
+        var xhr = new XMLHttpRequest();
+        xhr.open("PATCH", "http://192.168.1.27:80/phpServer/classes.php/1", true);
+
+        xhr.onload = function() {
+            document.getElementById("risposta").innerHTML = xhr.response;
+        };
+        xhr.onerror = function() {
+            alert("Bau!");
+        };
+        xhr.send(JSON.stringify({
+
+            "section": "BAna"
+        }));
+    </script>
+</head>
+
+<body>
+    <h1>Risposta</h1>
+    <div id="risposta"></div>
+</body>
+
 </html>

@@ -124,7 +124,33 @@ class classes
  
     // patch TODO
     public function patch() {
-		
+		try {
+			$campi="";
+			if(!is_null($this->_year))
+				$campi .= "year = :year,";
+
+			if(!is_null($this->_section))
+				$campi .= "section = :section,";
+
+			$campi = rtrim($campi,",");
+
+    		$sql = "UPDATE class SET ".$campi." WHERE id = :id";
+			$stmt = $this->db->prepare($sql);
+			
+		    $data = [
+				'id' => $this->_id,
+			];
+		if(!is_null($this->_year))
+			$data['year'] = $this->_name;
+
+		if(!is_null($this->_section))
+			$data['section'] = $this->_section;
+		echo $sql;
+		$stmt->execute($data);
+		    return "Ok";
+		} catch (Exception $e) {
+		    die("Oh noes! There's an error in the query!".$e);
+		}
     }
  
 }

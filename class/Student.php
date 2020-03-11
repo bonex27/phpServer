@@ -127,7 +127,47 @@ class Student
  
     // patch TODO
     public function patch() {
-		
+		try {
+			$campi="";
+			if(!is_null($this->_name))
+				$campi .= "name = :name,";
+
+			if(!is_null($this->_surname))
+				$campi .= "surname = :surname,";
+
+			if(!is_null($this->_sidiCode))
+				$campi .= "sidi_code = :sidiCode,";
+
+			if(!is_null($this->_taxCode))
+				$campi .= "tax_code = :taxCode,";
+
+			$campi = rtrim($campi,",");
+
+    		$sql = "UPDATE student SET ".$campi." WHERE id = :id";
+			$stmt = $this->db->prepare($sql);
+			
+		    $data = [
+				'id' => $this->_id,
+			];
+		if(!is_null($this->_name))
+			$data['name'] = $this->_name;
+
+		if(!is_null($this->_surname))
+			$data['surname'] = $this->_surname;
+
+		if(!is_null($this->_sidiCode))
+			$data['sidiCode'] = $this->_sidiCode;
+
+		if(!is_null($this->_taxCode))
+			$data['taxCode'] = $this->_taxCode;
+
+		$stmt->execute($data);
+		echo $sql;
+		echo var_dump($data);
+		    return "Ok";
+		} catch (Exception $e) {
+		    die("Oh noes! There's an error in the query!".$e);
+		}
     }
  
 }
