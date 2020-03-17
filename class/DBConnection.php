@@ -11,7 +11,7 @@ class DBConnection {
     private $_dbHostname = "localhost:3306";
     private $_dbName = "FI_ITIS_MEUCCI";
     private $_dbUsername = "bonex";
-    private $_dbPassword = "Pietro001";
+    private $_dbPassword = "pietro001";
     private $_con;
  
     public function __construct() {
