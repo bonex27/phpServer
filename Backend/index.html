@@ -3,7 +3,7 @@
 <head>
     <script>
         var xhr = new XMLHttpRequest();
-        xhr.open("PATCH", "http://localhost:80/phpServer/studentsClasses.php/1217", true);
+        xhr.open("GET", "http://192.168.1.27:80/phpServer/studentsClasses.php/1217", true);
 
         xhr.onload = function() {
             document.getElementById("risposta").innerHTML = xhr.response;
@@ -14,7 +14,7 @@
         xhr.send(JSON.stringify({
 
             "student": "1486",
-            "class" : "6"
+            "class": "6"
 
         }));
     </script>
