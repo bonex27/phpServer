@@ -2,98 +2,82 @@
 ###APP LOAD###
 */
 
+let levelsToApp = 0;    //DEBUG ONLY. Use if app.html is not at the root of the website (eg: localhost/somefolder/app.html)
+                        //Specify how many levels there are to reach it (1 for the previous example)
 let appTitle;
 let appContainer;
 let appNavbar;
 
 function load()
 {
-    var url = window.location.href;
-    var urlSplit = url.split("/");
-    var host = urlSplit[2];
-    var urlLength = urlSplit.length;
+    var path = window.location.pathname;
+    var pathSplit = path.split("/");
+    var pathLength = pathSplit.length;
 
     appTitle = document.getElementById("appTitle");
+
     appContainer = document.getElementById("appContainer");
+
     appNavbar = document.getElementById("appNavbar");
 
-    //Put this in a function?
     var isLoggedRequest = new XMLHttpRequest();
-    isLoggedRequest.open("GET", host + "/api/isLogged.php", false)
-    isLoggedRequest.send();
 
-    var isLogged = eval(isLoggedRequest.response);
+    let pathTopLevel = pathSplit[1 + levelsToApp];
+    let corso = pathSplit[2 + levelsToApp];
 
-    if(!isLogged)
+    appTitle.innerHTML = "";  
+
+    switch(pathTopLevel)
     {
-        appNavbar.innerHTML = "";
-        
-        var navItem = document.createElement("li");
-        navItem.className="nav-item";
-
-        var navLink = document.createElement("a");
-        navLink.className="nav-link";
-        navLink.innerHTML="Login"
-        navLink.setAttribute("href", "login");
-        navItem.appendChild(navLink);
-
-        appNavbar.appendChild(navItem);
-
-        
-        var navItem = document.createElement("li");
-        navItem.className="nav-item";
-
-        var navLink = document.createElement("a");
-        navLink.className="nav-link";
-        navLink.innerHTML="Registrati"
-        navLink.setAttribute("href", "signup");
-        navItem.appendChild(navLink);
-
-        appNavbar.appendChild(navItem);
-    }
-    else
-    {
-        appNavbar.innerHTML = "";
-        var navItem = document.createElement("li");
-        navItem.className="nav-item";
-
-        var navLink = document.createElement("a");
-        navLink.className="nav-link";
-        navLink.addEventListener("click", logout);
-        navLink.innerHTML="Esci";
-        navItem.appendChild(navLink);
-
-        appNavbar.appendChild(navItem);
-    }
-    //till here?
-
-
-    if(urlSplit[urlLength-1]=="index")
-    {
-        loadIndex();
-    }
-    else if(urlSplit[urlLength-1]=="corsi")
-    {
-        listCorsi();
-    }
-    else if(urlSplit[urlLength-1]=="login")
-    {
-        loadLogin();
-    }
-    else if(urlSplit[urlLength-1]=="signup")
-    {
-        loadSignUp();
-    }
-    else if(urlSplit[urlLength-1]=="home")
-    {
-        loadHome();
-    }
-    else
-    {
-        loadCorso(urlSplit[urlLength-1]);
+        case "corsi":
+        {
+            if(!isLogged)   //NOTE: Perhaps save location and restore it after login?
+            {
+                history.pushState({},"Meucci4Africa", "/login");
+                loadLogin();
+            }
+            else
+            {
+                if(corso != undefined && corso != "")
+                {
+                    loadCorso(corso);
+                }
+                else
+                {
+                    listCorsi();
+                }
+            }
+        }break;
+        case "home":
+        {
+            if(!isLogged)   //NOTE: Perhaps save location and restore it after login?
+            {
+                history.pushState({},"Meucci4Africa", "/login");
+                loadLogin();
+            }
+            else
+            {
+                loadHome();
+            }
+        }break;
+        case "login":
+        {
+            loadLogin();
+        }break;
+        case "signup":
+        {
+            loadSignUp();
+        }break;
+        default:
+        {
+            history.replaceState({}, "Meucci4Africa", "/");
+            loadIndex();
+        }break;
     }
 }
-window.onpopstate = load;
+
+window.addEventListener("popstate", load);
+window.addEventListener("load", load);
 
 /*
 ###INDEX###
@@ -101,8 +85,8 @@ window.onpopstate = load;
 
 function loadIndex()
 {
-    appTitle.innerHTML = "Meucci4Africa";
-    appContainer.innerHTML = "<img src='/img/logo.png' class='rounded' alt='LOGO'>";
+    appTitle.innerHTML = "<a class='unclickable text-black'>Menu</a>";
+    appContainer.innerHTML = '<table class="table"><tbody><tr><td><button class="btn btn-primary" type="button">Alunni</button></td><td><button class="btn btn-success" type="button">Classi</button></td><td><button class="btn btn-info" type="button">Allocazione alunni</button></td></tr></tbody></table>';
 }
 
 /*
@@ -111,21 +95,55 @@ function loadIndex()
 
 function listCorsi()
 {
-    appTitle.innerHTML="Corsi";
+    let title;
+
+    appTitle.innerHTML = "";
+
+    title = document.createElement("a");
+    title.addEventListener("click",
+                        function() {
+                                    history.pushState({},"Meucci4Africa", "/home");
+                                    loadHome();
+                                });
+    title.className = "clickable text-black";
+    title.innerHTML = "Home -> ";
+    appTitle.appendChild(title);
+
+    title = document.createElement("a");
+    title.className = "unclickable text-black";
+    title.innerHTML = "Corsi";
+    appTitle.appendChild(title);
+
+    appContainer.innerHTML="";
+
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", host + "/api/corsi.php", true);
+    xhr.open("GET", "/API/corsi.php", true);
 
     xhr.onload = function()
     {
         var obj = JSON.parse(xhr.response);
         console.log( obj.length);
-        var page = "";
         for(var i = 0; i< obj.length; i++)
         {
-            page +="<h3 style='font-weight: bold' onclick='clickCorso("+obj[i].idArgomento+")'>"+obj[i].titolo+"<h3>";
-            page += "<h4 id='desc'>"+obj[i].descrizione+"</h4>";
+            var title = document.createElement("h3");
+            var description = document.createElement("h4");
+
+            title.setAttribute("style", "font-weight: bold");
+            title.className = "clickable";
+            title.innerHTML = obj[i].titolo;
+
+            let id = obj[i].idArgomento;
+            title.addEventListener("click",
+                                    function()
+                                    {
+                                        clickCorso(id)
+                                    });
+
+            description.innerHTML = obj[i].descrizione;
+
+            appContainer.appendChild(title);
+            appContainer.appendChild(description);
         }
-        appContainer.innerHTML = page;
     };
     xhr.onerror = function()
     {
@@ -142,25 +160,52 @@ function listCorsi()
 
 function clickCorso(id)
 {
-    history.pushState({},"Meucci4Africa", host + "/corsi/" + id);
+    history.pushState({},"Meucci4Africa", "/corsi/" + id);
     loadCorso(id);
 }
 
 function loadCorso(id)
 {
-    var chiamataSingola = host + '/api/corsi.php?id='+ id;
+    appTitle.innerHTML = "";
+    var chiamataSingola = '/API/corsi.php?id='+ id;
     var xhr = new XMLHttpRequest();
     xhr.open("GET", chiamataSingola, true);
-    xhr.onload = function() {
-        
+    xhr.onload = function()
+    {
+        let title;
         var obj = JSON.parse(xhr.response);
-        appTitle.innerHTML=obj[0].titolo;
+    
+        title = document.createElement("a");
+        title.addEventListener("click",
+                            function() {
+                                        history.pushState({},"Meucci4Africa", "/home");
+                                        loadHome();
+                                    } );
+        title.className = "clickable text-black";
+        title.innerHTML = "Home -> ";
+        appTitle.appendChild(title);
+    
+        title = document.createElement("a");
+        title.addEventListener("click", 
+                            function() {
+                                        history.pushState({},"Meucci4Africa", "/corsi");
+                                        listCorsi();
+                                    } );
+        title.className = "clickable text-black";
+        title.innerHTML = "Corsi -> ";
+        appTitle.appendChild(title);
+
+        title = document.createElement("a");
+        title.className = "unclickable text-black";
+        title.innerHTML = obj[0].titolo;
+        appTitle.appendChild(title);
+
         var page = "<h3 id='title' style='font-weight: bold'>"+obj[0].titolo+"<h3>";
         page += "<h4 id='desc'>"+obj[0].descrizione+"</h4>";
         page +=  '<select id="inputLezione" class="custom-select mr-sm-2" required></select>';
         page += '<br><br><button type="button"  class="btn btn-danger" onclick="callIscriviti()">Iscriviti</button>';
         appContainer.innerHTML = page;
-        callLezioni(id);
+        loadTurni(id);
     };
     xhr.onerror = function() {
         alert("Errore");
@@ -170,42 +215,50 @@ function loadCorso(id)
 
 }
 
-function callLezioni(id)
+function loadTurni(argomento)
 {
-    var chiamataInfo = host + '/api/lezioni.php?idArgomento='+ id;
+    var chiamataInfo = '/API/lezioni.php?idArgomento='+ argomento;
     var callInfo = new XMLHttpRequest();
     callInfo.open("GET", chiamataInfo, true);
-    callInfo.onload = function() {
-        var obj = JSON.parse(callInfo.response);
-        loadLezioni(obj);
+    callInfo.onload = function()
+    {
+        let option;
+        var turni = JSON.parse(callInfo.response);
+
+        for (var i = 0; i < turni.length; i++)
+        {
+            option = document.createElement('option');
+            option.text = turni[i].idTurno + turni[i].oraInizio;
+            option.value = turni[i].idLezione;
+            document.getElementById("inputLezione").add(option);
+        }
 
     };
-    callInfo.onerror = function() {
+    callInfo.onerror = function()
+    {
         alert("Errore");
     };
     callInfo.send();
 }
 
-function loadLezioni(lezioni) {
-    let option;
-
-    for (var i = 0; i < lezioni.length; i++) {
-
-        option = document.createElement('option');
-        option.text = lezioni[i].idTurno + lezioni[i].oraInizio;
-        option.value = lezioni[i].idLezione;
-        document.getElementById("inputLezione").add(option);
-    }
-}
 
 function callIscriviti()
 {
     id = document.getElementById("inputLezione").value;
-    var chiamataIscrizione = host + '/api/iscrizioni.php?id='+ id;
+    var chiamataIscrizione = '/API/iscrizioni.php?id='+ id;
     var xhr = new XMLHttpRequest();
     xhr.open("GET", chiamataIscrizione, true);
-    xhr.onload = function() {
-        alert(xhr.response);
+    xhr.onload = function()
+    {
+        if(xhr.status != 200)
+        {
+            alert("Sei già iscritto ad una lezione durante questo turno");
+        }
+        else
+        {
+            history.pushState({},"Meucci4Africa", "/home");
+            loadHome();
+        }
     };
     xhr.onerror = function() {
         alert("Errore");
@@ -215,17 +268,17 @@ function callIscriviti()
 
 
 /*
-###EXIT###
+###LOGOUT###
 */
 
 function logout()
 {
   var xhr = new XMLHttpRequest();
-    xhr.open("GET", host + '/api/esci.php' , true);
+    xhr.open("GET", '/API/esci.php' , true);
 
     xhr.onload = function()
     {
-        history.pushState({},"Meucci4Africa", host + "/index");
+        history.pushState({},"Meucci4Africa", "/");
         load();
     };
     xhr.onerror = function()
@@ -241,7 +294,7 @@ function logout()
 
 function loadLogin()
 {
-    appTitle.innerHTML = "Login"
+    appTitle.innerHTML = "<a class='unclickable text-black'>Login</a>";
     appContainer.innerHTML = 
 '<form class="form-signin" method="GET" id="form">'+
     '<h1 class="h3 mb-3 font-weight-normal">Sign in</h1>'+
@@ -254,27 +307,31 @@ function loadLogin()
 '</form>';
 }
 
-function login() {
+function login()
+{
     var email = document.getElementById("inputEmail").value;
     var password = document.getElementById("inputPassword").value;
     var obj = { email: email, password: password };
     var myJSON = JSON.stringify(obj);
 
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", host + "/api/login.php", true);
+    xhr.open("POST", "/API/login.php", true);
 
-    xhr.onload = function() {
+    xhr.onload = function()
+    {
         if(xhr.status != 200)
         {
             alert("Password o email non validi");
         }
         else
         {
-            history.pushState({},"Meucci4Africa", host + "/home");
-            load();
+            history.pushState({},"Meucci4Africa", "/home");
+            loadNavbar(true);
+            loadHome();
         }
     };
-    xhr.onerror = function() {
+    xhr.onerror = function()
+    {
         alert("Errore");
     };
     xhr.send(myJSON);
@@ -288,6 +345,7 @@ function login() {
 
 function loadSignUp()
 {
+    appTitle.innerHTML = "<a class='unclickable text-black'>Registrazione</a>";
     appContainer.innerHTML = 
     '<form class="form-signin">' +
     '    <h1 class="h3 mb-3 font-weight-normal">Registrazione</h1>' +
@@ -314,14 +372,22 @@ function signUp() {
     var myJSON = JSON.stringify(obj);
 
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", host + "/api/registrazione.php", true);
+    xhr.open("POST", "/API/registrazione.php", true);
 
-    xhr.onload = function() {
-        //SBAGLIATO, CONTROLLARE ERRORE
-        history.pushState({},"Meucci4Africa", host + "/login");
-        loadLogin();
+    xhr.onload = function()
+    {
+        if(xhr.status != 200)
+        {
+            alert("Errore!");
+        }
+        else
+        {
+            history.pushState({},"Meucci4Africa", "/login");
+            loadLogin();
+        }
     };
-    xhr.onerror = function() {
+    xhr.onerror = function()
+    {
         alert("Errore");
     };
     xhr.send(myJSON);
@@ -332,14 +398,9 @@ function signUp() {
 ###HOME###
 */
 
-function clickIscriviti()
-{
-    history.pushState({},"Meucci4Africa", host + "/corsi");
-    listCorsi();
-}
-
 function loadHome()
 {
+    appTitle.innerHTML = "<a class='unclickable text-black'>Home</a>";
     appContainer.innerHTML="";
 
     var table = document.createElement("table");
@@ -351,56 +412,84 @@ function loadHome()
 
     var tr = document.createElement('tr');
     tr.innerHTML =
-
         '<th>Turno</th>' +
-
         '<th>Corso</th>' +
         '<th>Inizio</th>' +
         '<th>Fine</th>' +
         '<th>Aula</th>'+
-
         '<th>Disiscriviti</th>';
-
-
     thead.appendChild(tr);
 
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", host + '/api/mieiCorsi.php' , true);
-    xhr.onload = function() {
+    xhr.open("GET", '/API/mieiCorsi.php' , true);
+    xhr.onload = function()
+    {
         var data = JSON.parse(xhr.response);
+        let tr, td, button;
 
         for(var i = 0; i < data.length; i++)
         {
-            var tr = document.createElement('tr');
-            tr.innerHTML = '<td>' + data[i].idTurno + '</td>' +
+            tr = document.createElement('tr');
+            tr.innerHTML =
+                '<td>' + data[i].idTurno + '</td>' +
                 '<td>' + data[i].Titolo + '</td>' +
                 '<td>' + data[i].oraInizio + '</td>' +
                 '<td>' + data[i].oraFine + '</td>'+
-                '<td>' + data[i].nomeAula + '</td>'+
-             '<td style="text-align: center;"><button type="button" class="btn btn-danger" onclick="delIscrizione('+data[i].idIscrizione+', '+ data[i].idLezione+')">-</button></td>';
+                '<td>' + data[i].nomeAula + '</td>';
+            td = document.createElement("td");
+            button = document.createElement("button");
 
-                '<td><button type="button" class="btn btn-danger" onclick="delIscrizione('+data[i].idIscrizione+', '+ data[i].idLezione+')">x</button></td>';
+            let iscrizione = data[i].idIscrizione;
+            let lezione = data[i].idLezione;
+            
+            button.className = "btn btn-danger";
+            button.addEventListener("click",
+                                    function()
+                                    {
+                                        delIscrizione(iscrizione, lezione);
+                                    });
+            button.innerHTML="x";
+
+            td.appendChild(button);
+            tr.appendChild(td);
             table.appendChild(tr);
         }
-        appContainer.innerHTML+='<button type="button" onclick="clickIscriviti()" class="btn btn-success">Iscriviti</button>';
+
+        button = document.createElement("button");
+
+        button.className = "btn btn-success";
+        button.addEventListener("click",
+                                function()
+                                {
+                                    history.pushState({},"Meucci4Africa", "/corsi");
+                                    listCorsi();
+                                });
+        button.innerHTML = "Vai ai corsi";
+
+        appContainer.appendChild(button);
+        
     };
-    xhr.onerror = function() {
+    xhr.onerror = function()
+    {
         alert("Errore");
     };
     xhr.send();
 }
+
 /*
-###Disiscrizione###
+###UNSUBSCRIBE###
 */
+
 function delIscrizione(iscrizione,lezione)
 {
     var xhr = new XMLHttpRequest();
-    xhr.open("DELETE", host + '/api/iscrizioni.php/?id='+iscrizione+"&idLezione="+lezione , true);
-    xhr.onload = function() {
-        loadHome();
-    };
-    xhr.onerror = function() {
+
+    xhr.open("DELETE", '/API/iscrizioni.php/?id='+iscrizione+"&idLezione="+lezione , true);
+    xhr.onload = loadHome;
+    xhr.onerror = function()
+    {
         alert("Errore");
     };
+
     xhr.send();
 }

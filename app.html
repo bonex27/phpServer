@@ -17,30 +17,23 @@
 
 
         <!-- Other CSS -->
-        <link href="/css/app.css" rel="stylesheet">
+        <link href="./style/app.css" rel="stylesheet">
 
         <!-- Scripts -->
-        <script src="/client/app.js"></script>
+        <script src="./client/app.js"></script>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 
         <title>Meucci for Africa</title>
     </head>
-    <body onload="load()">
+    <body>
 
-        <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #eaaf25;">
-                <a class="navbar-brand" href="index"><b>Meucci for Africa</b></a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="#navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-        
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ml-auto" id="appNavbar">
-                    </ul>
-        
-                </div>
-        </nav>
+        <header class="navbar navbar-expand-lg navbar-light">
+                <a class="navbar-brand" href="/">
+                    <b>School management </b>
+                </a>
+        </header>
 
         <main class="my-form">
             <div class="cotainer">
@@ -48,14 +41,11 @@
                     <div class="col-md-8">
                         <div class="card bg-yellow mb-3">
                             <div class="card-header bg-yellow">
-                                <a class="navbar-brand text-white"><b id="appTitle"></b></a>
+                                <a class="navbar-brand"><b id="appTitle"></b></a>
                             </div>
                             <div class="card-body appBg">
                                 <div id="appContainer">
-                                    <div class="nowLoading">
-                                        <h1>   NOW LOADING...</h1>
-                                        <h4>Please Wait</h4>
-                                    </div>
+
                                 </div>
                             </div>
                         </div>
