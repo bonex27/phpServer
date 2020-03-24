@@ -6,8 +6,8 @@ switch($requestMethod) {
     case 'GET'://ok
 
     $pathArray = explode('/', $_SERVER['REQUEST_URI']);
-    if(isset($pathArray[3]))
-        $id = $pathArray[3];
+    if(isset($pathArray[4]))
+        $id = $pathArray[4];
     else
         $id = -1;
 	
@@ -19,7 +19,7 @@ switch($requestMethod) {
         }
         
 		if(!empty($data)) {
-          $js_encode = json_encode(array('status'=>TRUE, 'classesInfo'=>$data), true);
+          $js_encode = json_encode($data);
         } else {
           $js_encode = json_encode(array('status'=>FALSE, 'message'=>'There is no record yet.'), true);
         }
@@ -42,9 +42,9 @@ switch($requestMethod) {
         break;
     case 'DELETE':
         $pathArray = explode('/', $_SERVER['REQUEST_URI']);
-        if(isset($pathArray[3]))
+        if(isset($pathArray[4]))
            { 
-               $id = $pathArray[3];
+               $id = $pathArray[4];
                $classes->_id = $id;
                echo $classes->delete();
            }
@@ -53,11 +53,11 @@ switch($requestMethod) {
         break;
     case 'PATCH':
         $pathArray = explode('/', $_SERVER['REQUEST_URI']);
-        if(!isset($pathArray[3]))
+        if(!isset($pathArray[4]))
                echo "Errore!";
         else
          {   
-            $id = $pathArray[3];
+            $id = $pathArray[4];
             $classes->_id = $id;
 
             //Ottiene il  json dalla richiesta
@@ -82,11 +82,11 @@ switch($requestMethod) {
         break;
     case 'PUT':
         $pathArray = explode('/', $_SERVER['REQUEST_URI']);
-        if(!isset($pathArray[3]))
+        if(!isset($pathArray[4]))
                echo "Errore!";
         else
          {   
-            $id = $pathArray[3];
+            $id = $pathArray[4];
             $classes->_id = $id;
 
             //Ottiene il  json dalla richiesta

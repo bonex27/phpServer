@@ -6,8 +6,8 @@ switch($requestMethod) {
     case 'GET'://ok
 
         $pathArray = explode('/', $_SERVER['REQUEST_URI']);
-        if(isset($pathArray[3]))
-            $id = $pathArray[3];
+        if(isset($pathArray[4]))
+            $id = $pathArray[4];
         else
             $id = -1;
         
@@ -45,9 +45,9 @@ switch($requestMethod) {
         break;
     case 'DELETE':
         $pathArray = explode('/', $_SERVER['REQUEST_URI']);
-        if(isset($pathArray[3]))
+        if(isset($pathArray[4]))
            { 
-               $studentClasses->_id = $pathArray[3];
+               $studentClasses->_id = $pathArray[4];
                echo $studentClasses->delete();
            }
         else
@@ -56,7 +56,7 @@ switch($requestMethod) {
         break;
     case 'PATCH':
         $pathArray = explode('/', $_SERVER['REQUEST_URI']);
-        if(!isset($pathArray[3]))
+        if(!isset($pathArray[4]))
                echo "Errore!";
         else
          {   
@@ -84,11 +84,11 @@ switch($requestMethod) {
         break;
     case 'PUT':
         $pathArray = explode('/', $_SERVER['REQUEST_URI']);
-        if(!isset($pathArray[3]))
+        if(!isset($pathArray[4]))
                echo "Errore!";
         else
          {   
-            $studentClasses->_id = $pathArray[3];
+            $studentClasses->_id = $pathArray[4];
 
             //Ottiene il  json dalla richiesta
             $inputJSON = file_get_contents('php://input');
