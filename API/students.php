@@ -6,8 +6,8 @@ switch($requestMethod) {
     case 'GET'://ok
 
     $pathArray = explode('/', $_SERVER['REQUEST_URI']);
-    if(isset($pathArray[3]))
-        $id = $pathArray[3];
+    if(isset($pathArray[4]))
+        $id = $pathArray[4];
     else
         $id = -1;
 	
@@ -17,13 +17,14 @@ switch($requestMethod) {
 		} else {
             $data = $student->list();          
         }
-        
 		if(!empty($data)) {
-          $js_encode = json_encode(array('status'=>TRUE, 'studentInfo'=>$data), true);
+          $js_encode = json_encode($data);
+          
         } else {
-          $js_encode = json_encode(array('status'=>FALSE, 'message'=>'There is no record yet.'), true);
+          echo"Error";
         }
         header('Content-Type: application/json');
+        header("HTTP/1.1 200 OK");
 		echo $js_encode;
 		break;
     

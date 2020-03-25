@@ -36,6 +36,7 @@ class classes
 			echo "a";
  
 		} catch (Exception $e) {
+			header("HTTP/1.1 500 Internal server error");
     		die("Oh noes! There's an error in the query!".$e);
 		}
 
@@ -52,7 +53,9 @@ class classes
 		    $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             return $result;
 		} catch (Exception $e) {
-		    die("Oh noes! There's an error in the query!");
+			header("HTTP/1.1 500 Internal server error");
+			die("Oh noes! There's an error in the query!");
+			
 		}
  
     }
@@ -96,8 +99,9 @@ class classes
 		    	'id' => $this->_id
 			];
 		    $stmt->execute($data);
-		    return "Ok";
+		    
 		} catch (Exception $e) {
+			header("HTTP/1.1 500 Internal server error");
 		    die("Oh noes! There's an error in the query!".$e);
 		}
     }
@@ -116,8 +120,9 @@ class classes
                     'section' => $this->_section,
                 ];
 		    $stmt->execute($data);
-		    return "Ok";
+		    
 		} catch (Exception $e) {
+			header("HTTP/1.1 500 Internal server error");
 		    die("Oh noes! There's an error in the query!".$e);
 		}
     }
@@ -147,8 +152,9 @@ class classes
 			$data['section'] = $this->_section;
 		echo $sql;
 		$stmt->execute($data);
-		    return "Ok";
+		    return ;
 		} catch (Exception $e) {
+			header("HTTP/1.1 500 Internal server error");
 		    die("Oh noes! There's an error in the query!".$e);
 		}
     }

@@ -24,6 +24,7 @@ switch($requestMethod) {
           $js_encode = json_encode(array('status'=>FALSE, 'message'=>'There is no record yet.'), true);
         }
         header('Content-Type: application/json');
+        header("HTTP/1.1 200 OK");
 		echo $js_encode;
 		break;
     
@@ -38,6 +39,7 @@ switch($requestMethod) {
         $js_encode = json_encode(array('status'=>TRUE, 'classesInfo'=>$data), true);
 
         header('Content-Type: application/json');
+        header("HTTP/1.1 200 OK");
 		echo $js_encode;
         break;
     case 'DELETE':
@@ -47,6 +49,7 @@ switch($requestMethod) {
                $id = $pathArray[4];
                $classes->_id = $id;
                echo $classes->delete();
+               header("HTTP/1.1 200 OK");
            }
         else
             echo "Errore!";
@@ -77,7 +80,7 @@ switch($requestMethod) {
             
 
             echo $classes ->patch();
-            
+            header("HTTP/1.1 200 OK");
          }
         break;
     case 'PUT':
@@ -102,7 +105,7 @@ switch($requestMethod) {
                 $classes->_section = null;
 
             echo $classes->put();
-            
+            header("HTTP/1.1 200 OK");
          }
         break;
     default:

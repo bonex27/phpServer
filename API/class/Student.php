@@ -37,9 +37,11 @@ class Student
 	    	$stmt = $this->db->prepare($sql);
 	    	$stmt->execute($data);
 			$status = $stmt->rowCount();
-			echo "a";
+			
+			header("HTTP/1.1 200 OK");
  
 		} catch (Exception $e) {
+			header("HTTP/1.1 500 Internal server error");
     		die("Oh noes! There's an error in the query!".$e);
 		}
 
@@ -53,9 +55,11 @@ class Student
 		    	'sidiCode' => $this->_sidiCode
 			];
 		    $stmt->execute($data);
-		    $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+			$result = $stmt->fetch(\PDO::FETCH_ASSOC);
+
             return $result;
 		} catch (Exception $e) {
+			header("HTTP/1.1 500 Internal server error");
 		    die("Oh noes! There's an error in the query!");
 		}
  
@@ -68,7 +72,7 @@ class Student
 		    $stmt = $this->db->prepare($sql);
  
 		    $stmt->execute();
-		    $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+			$result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             return $result;
 		} catch (Exception $e) {
 		    die("Oh noes! There's an error in the query!");
@@ -84,9 +88,12 @@ class Student
 		    	'id' => $this->_id
 			];
 		    $stmt->execute($data);
-		    $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+			$result = $stmt->fetch(\PDO::FETCH_ASSOC);
+			header('Content-Type: application/json');
+			header("HTTP/1.1 200 OK");
             return $result;
 		} catch (Exception $e) {
+			header("HTTP/1.1 500 Internal server error");
 		    die("Oh noes! There's an error in the query!");
 		}
     }
@@ -100,7 +107,7 @@ class Student
 		    	'id' => $this->_id
 			];
 		    $stmt->execute($data);
-		    return "Ok";
+		    header("HTTP/1.1 200 OK");
 		} catch (Exception $e) {
 		    die("Oh noes! There's an error in the query!".$e);
 		}
@@ -119,8 +126,9 @@ class Student
 			    'taxCode' => $this->_taxCode,
 			];
 		    $stmt->execute($data);
-		    return "Ok";
+		    header("HTTP/1.1 200 OK");
 		} catch (Exception $e) {
+			header("HTTP/1.1 500 Internal server error");
 		    die("Oh noes! There's an error in the query!".$e);
 		}
     }
@@ -164,8 +172,9 @@ class Student
 		$stmt->execute($data);
 		echo $sql;
 		echo var_dump($data);
-		    return "Ok";
+		header("HTTP/1.1 200 OK");
 		} catch (Exception $e) {
+			header("HTTP/1.1 500 Internal server error");
 		    die("Oh noes! There's an error in the query!".$e);
 		}
     }
