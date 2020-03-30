@@ -121,3 +121,21 @@ div.nowLoading
   top: 0;
   z-index: 1024;
 }
+
+#modalTitle
+{
+  color: #27241f;
+}
+#modalBody
+{
+  color: #27241f;
+}
+.link 
+{
+  color: #007bff !important;
+}
+
+.link:hover
+{
+  text-decoration: underline !important;
+}

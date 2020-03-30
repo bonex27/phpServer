@@ -6,8 +6,8 @@ switch($requestMethod) {
     case 'GET'://ok
 
     $pathArray = explode('/', $_SERVER['REQUEST_URI']);
-    if(isset($pathArray[4]))
-        $id = $pathArray[4];
+    if(isset($pathArray[5]))
+        $id = $pathArray[5];
     else
         $id = -1;
 	
@@ -44,9 +44,9 @@ switch($requestMethod) {
         break;
     case 'DELETE':
         $pathArray = explode('/', $_SERVER['REQUEST_URI']);
-        if(isset($pathArray[4]))
+        if(isset($pathArray[5]))
            { 
-               $id = $pathArray[4];
+               $id = $pathArray[5];
                $classes->_id = $id;
                echo $classes->delete();
                header("HTTP/1.1 200 OK");
@@ -56,11 +56,11 @@ switch($requestMethod) {
         break;
     case 'PATCH':
         $pathArray = explode('/', $_SERVER['REQUEST_URI']);
-        if(!isset($pathArray[4]))
+        if(!isset($pathArray[5]))
                echo "Errore!";
         else
          {   
-            $id = $pathArray[4];
+            $id = $pathArray[5];
             $classes->_id = $id;
 
             //Ottiene il  json dalla richiesta
@@ -85,11 +85,11 @@ switch($requestMethod) {
         break;
     case 'PUT':
         $pathArray = explode('/', $_SERVER['REQUEST_URI']);
-        if(!isset($pathArray[4]))
+        if(!isset($pathArray[5]))
                echo "Errore!";
         else
          {   
-            $id = $pathArray[4];
+            $id = $pathArray[5];
             $classes->_id = $id;
 
             //Ottiene il  json dalla richiesta
@@ -109,7 +109,7 @@ switch($requestMethod) {
          }
         break;
     default:
-	    header("HTTP/1.0 405 Method Not Allowed");
+	    header("HTTP/1.0 505 Method Not Allowed");
 	    break;
 }
 ?>	

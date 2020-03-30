@@ -131,10 +131,10 @@ class classes
     public function patch() {
 		try {
 			$campi="";
-			if(!is_null($this->_year))
+			if(!is_null($this->_year) || $this->_year =! "")
 				$campi .= "year = :year,";
 
-			if(!is_null($this->_section))
+			if(!is_null($this->_section) || $this->_section =! "")
 				$campi .= "section = :section,";
 
 			$campi = rtrim($campi,",");
@@ -145,10 +145,10 @@ class classes
 		    $data = [
 				'id' => $this->_id,
 			];
-		if(!is_null($this->_year))
+		if(!is_null($this->_year) || $this->_year =! "")
 			$data['year'] = $this->_year;
 
-		if(!is_null($this->_section))
+		if(!is_null($this->_section) || $this->_section =! "")
 			$data['section'] = $this->_section;
 		echo $sql;
 		$stmt->execute($data);

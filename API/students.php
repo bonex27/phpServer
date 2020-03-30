@@ -1,13 +1,13 @@
 <?php
 $requestMethod = $_SERVER["REQUEST_METHOD"];
-include('./class/Student.php');
+include('class/Student.php');
 $student = new Student();
 switch($requestMethod) {
     case 'GET'://ok
 
     $pathArray = explode('/', $_SERVER['REQUEST_URI']);
-    if(isset($pathArray[4]))
-        $id = $pathArray[4];
+    if(isset($pathArray[5]))
+        $id = $pathArray[5];
     else
         $id = -1;
 	
@@ -19,13 +19,14 @@ switch($requestMethod) {
         }
 		if(!empty($data)) {
           $js_encode = json_encode($data);
+          header('Content-Type: application/json');
+        header("HTTP/1.1 200 OK");
+		echo $js_encode;
           
         } else {
           echo"Error";
         }
-        header('Content-Type: application/json');
-        header("HTTP/1.1 200 OK");
-		echo $js_encode;
+        
 		break;
     
     case 'POST'://Ok
@@ -45,9 +46,9 @@ switch($requestMethod) {
         break;
     case 'DELETE'://ok
         $pathArray = explode('/', $_SERVER['REQUEST_URI']);
-        if(isset($pathArray[4]))
+        if(isset($pathArray[5]))
            { 
-               $id = $pathArray[4];
+               $id = $pathArray[5];
                $student->_id = $id;
                echo $student->delete();
            }
@@ -56,11 +57,11 @@ switch($requestMethod) {
         break;
     case 'PATCH':
         $pathArray = explode('/', $_SERVER['REQUEST_URI']);
-        if(!isset($pathArray[4]))
+        if(!isset($pathArray[5]))
                echo "Errore!";
         else
          {   
-            $id = $pathArray[4];
+            $id = $pathArray[5];
             $student->_id = $id;
 
             //Ottiene il  json dalla richiesta
@@ -93,11 +94,11 @@ switch($requestMethod) {
         break;
     case 'PUT'://ok
         $pathArray = explode('/', $_SERVER['REQUEST_URI']);
-        if(!isset($pathArray[4]))
+        if(!isset($pathArray[5]))
                echo "Errore!";
         else
          {   
-            $id = $pathArray[4];
+            $id = $pathArray[5];
             $student->_id = $id;
 
             //Ottiene il  json dalla richiesta
@@ -129,7 +130,7 @@ switch($requestMethod) {
          }
         break;
     default:
-	    header("HTTP/1.0 405 Method Not Allowed");
+	    header("HTTP/1.0 505 Method Not Allowed");
 	    break;
 }
 ?>	

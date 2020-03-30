@@ -137,16 +137,16 @@ class Student
     public function patch() {
 		try {
 			$campi="";
-			if(!is_null($this->_name))
+			if(!is_null($this->_name) || $this->_name =! "")
 				$campi .= "name = :name,";
 
-			if(!is_null($this->_surname))
+			if(!is_null($this->_surname) || $this->_surname =! "")
 				$campi .= "surname = :surname,";
 
-			if(!is_null($this->_sidiCode))
+			if(!is_null($this->_sidiCode) || $this->_sidiCode =! "")
 				$campi .= "sidi_code = :sidiCode,";
 
-			if(!is_null($this->_taxCode))
+			if(!is_null($this->_taxCode) || $this->_taxCode =! "")
 				$campi .= "tax_code = :taxCode,";
 
 			$campi = rtrim($campi,",");
@@ -157,20 +157,21 @@ class Student
 		    $data = [
 				'id' => $this->_id,
 			];
-		if(!is_null($this->_name))
+		if(!is_null($this->_name) || $this->_name =! "")
 			$data['name'] = $this->_name;
 
-		if(!is_null($this->_surname))
+		if(!is_null($this->_surname) || $this->_surname =! "")
 			$data['surname'] = $this->_surname;
 
-		if(!is_null($this->_sidiCode))
+		if(!is_null($this->_sidiCode) || $this->_sidiCode =! "")
 			$data['sidiCode'] = $this->_sidiCode;
 
-		if(!is_null($this->_taxCode))
+		if(!is_null($this->_taxCode) || $this->_taxCode =! "")
 			$data['taxCode'] = $this->_taxCode;
 
-		$stmt->execute($data);
 		echo $sql;
+		$stmt->execute($data);
+		
 		echo var_dump($data);
 		header("HTTP/1.1 200 OK");
 		} catch (Exception $e) {
