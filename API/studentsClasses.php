@@ -1,19 +1,20 @@
 <?php
 $requestMethod = $_SERVER["REQUEST_METHOD"];
-include('./class/studentClass.php');
+include('class/studentClass.php');
 $studentClasses = new studentClass();
 switch($requestMethod) {
     case 'GET'://ok
 
         $pathArray = explode('/', $_SERVER['REQUEST_URI']);
-        if(isset($pathArray[4]))
-            $id = $pathArray[4];
+        if(isset($pathArray[5]))
+            $id = $pathArray[5];
         else
             $id = -1;
         
             if($id != -1) {
 
                 $studentClasses->_id = $id;
+
                 $data = $studentClasses->one();
 
             } else {
@@ -21,7 +22,7 @@ switch($requestMethod) {
             }
             
             if(!empty($data)) {
-              $js_encode = json_encode(array($data), true);
+              $js_encode = json_encode($data, true);
             } else {
               $js_encode = json_encode(array('status'=>FALSE, 'message'=>'There is no record yet.'), true);
             }
@@ -34,7 +35,7 @@ switch($requestMethod) {
         $input = json_decode($inputJSON, TRUE);
 
         $studentClasses->_student = $input["student"];
-        $studentClasses->_class = $input["class"];
+        $studentClasses->_class = $input["_class"];
 
         $data = $studentClasses->insert();
         $js_encode = json_encode(array($data), true);
@@ -47,7 +48,7 @@ switch($requestMethod) {
         $pathArray = explode('/', $_SERVER['REQUEST_URI']);
         if(isset($pathArray[4]))
            { 
-               $studentClasses->_id = $pathArray[4];
+               $studentClasses->_id = $pathArray[5];
                echo $studentClasses->delete();
            }
         else
@@ -60,7 +61,7 @@ switch($requestMethod) {
                echo "Errore!";
         else
          {   
-            $studentClasses->_id = $pathArray[3];
+            $studentClasses->_id = $pathArray[5];
 
             //Ottiene il  json dalla richiesta
             $inputJSON = file_get_contents('php://input');
@@ -88,7 +89,7 @@ switch($requestMethod) {
                echo "Errore!";
         else
          {   
-            $studentClasses->_id = $pathArray[4];
+            $studentClasses->_id = $pathArray[5];
 
             //Ottiene il  json dalla richiesta
             $inputJSON = file_get_contents('php://input');
@@ -108,7 +109,8 @@ switch($requestMethod) {
          }
         break;
     default:
-	    header("HTTP/1.0 405 Method Not Allowed");
+        header("HTTP/1.0 405 Method Not Allowed");
+        echo "aaa";
 	    break;
 }
 ?>	

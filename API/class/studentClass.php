@@ -52,7 +52,8 @@ class studentClass
 			    'class' => $this->_class,
 			];
 		    $stmt->execute($data);
-		    $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+			$result = $stmt->fetch(\PDO::FETCH_ASSOC);
+			
             return $result;
 
 		} catch (Exception $e) {
@@ -80,17 +81,18 @@ class studentClass
     // getOne
     public function one() {
     	try {
-    		$sql = "SELECT * FROM student_class WHERE id=:id";
+    		$sql = "SELECT sc.id, sc.id_class, sc.id_student, s.name,s.surname FROM student_class sc inner join student s  on s.id = sc.id_student WHERE sc.id_class = :id";
 		    $stmt = $this->db->prepare($sql);
 		    $data = [
-		    	'id' => $this->_id
+		    	'id' => $this->_id,
 			];
 		    $stmt->execute($data);
-		    $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+			$result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+			//echo $sql ;
             return $result;
 		} catch (Exception $e) {
 			header("HTTP/1.1 500 Internal server error");
-		    die("Oh noes! There's an error in the query!");
+		    die("Oh noes! There's an error in the query!" . $e);
 		}
     }
  

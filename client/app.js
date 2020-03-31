@@ -17,6 +17,7 @@ function loadIndex() {
 
     appContainer = document.getElementById("button");
 
+
     appResult = document.getElementById("button");
 
     appNavbar = document.getElementById("appNavbar");
@@ -33,9 +34,7 @@ function Delete(id, call) {
         case 2:
             getUrl = 'http://localhost/work/phpServer/API/classes.php/' + id;
             break;
-        case 3:
-            getUrl = 'http://localhost/work/phpServer/API/studentsClasses.php/' + id;
-            break;
+
     }
     var xhr = new XMLHttpRequest();
     xhr.open("DELETE", getUrl, true);
@@ -52,14 +51,8 @@ function loadPage(call) {
     let title, button;
     appTitle.innerHTML = "";
 
-    title = document.createElement("a");
-    title.addEventListener("click",
-        function() {
-            loadIndex();
-        });
-    title.className = "clickable text-black";
-    title.innerHTML = "<- Back";
-    appTitle.appendChild(title);
+    appTitle.innerHTML = "<- Back";
+    appTitle.innerHTML = '<a class="clickable text-black" onclick="loadIndex()"> Back</a>';
 
     appTitle.innerHTML += "<br>"
     title = document.createElement("a");
@@ -172,7 +165,8 @@ function loadPage(call) {
                 '<th>year</th>' +
                 '<th>Section</th>' +
                 '<th>Delete</th>'+
-                '<th>Edit</th>';
+                '<th>Edit</th>'+
+                '<th>Student</th>';
             thead.appendChild(tr);
 
             var xhr = new XMLHttpRequest();
@@ -214,6 +208,20 @@ function loadPage(call) {
                     button.innerHTML="Edit";                       
                     td.appendChild(button);
                     tr.appendChild(td);
+
+                    td = document.createElement("td");
+                    button = document.createElement("button");
+                    
+                    button.className = "btn btn-warning";                 
+                    button.addEventListener("click",
+                                            function()
+                                            {
+                                                seeStudent(id);
+                                            });
+                    
+                    button.innerHTML="Edit";                       
+                    td.appendChild(button);
+                    tr.appendChild(td);
                     table.appendChild(tr);
                 }
             button = document.createElement("button");
@@ -234,6 +242,159 @@ function loadPage(call) {
             xhr.send();
             break;
     }
+}
+
+function seeStudent(idClass)
+{
+    document.getElementById('modalTitle').innerHTML ="Students";
+    let modal =  document.getElementById('modalBody');
+    modal.innerHTML = "";
+            var table = document.createElement("table");
+            var thead = document.createElement("thead");
+            table.setAttribute("class", "table");
+            thead.className = "thead-dark";
+            table.appendChild(thead);
+            modal.appendChild(table);
+
+            var tr = document.createElement('tr');
+            tr.innerHTML =
+                '<th>Nome</th>' +
+                '<th>Cognome</th>' +
+                '<th>Delete</th>';
+            thead.appendChild(tr);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", './API/studentsClasses.php/'+idClass, true);
+            xhr.onload = function() {
+                var data = JSON.parse(xhr.response);
+                let tr, td, button;
+
+                for (var i = 0; i < data.length; i++) {
+                    tr = document.createElement('tr');
+                    tr.innerHTML =
+                        '<td style="color: black;">' + data[i].name + '</td>' +
+                        '<td style="color: black;">' + data[i].surname + '</td>' ;
+                
+                        td = document.createElement("td");
+                        td
+                        button = document.createElement("button");
+                        let idStudent = data[i].id;
+
+
+                    button.className = "btn btn-danger";
+                    button.addEventListener("click",
+                        function() {
+                            $('#modalAll').modal('hide');
+                            remStudent(idStudent ,idClass);
+                            
+                        });
+                    button.innerHTML = "x";
+
+                    td.appendChild(button);
+                    tr.appendChild(td);
+
+                    table.appendChild(tr);
+                }
+                button = document.createElement("button");
+            button.innerHTML="Add +";
+            button.className="btn btn-success";
+            button.type ="button";
+            button.id="btnAdd";
+            button.addEventListener("click", function()
+            {
+                addInClass(idClass);
+            });
+            modal.appendChild(button);
+            $('#modalAll').on('hidden.bs.modal', function (e) {
+                modal.innerHTML = "";
+            });
+            $('#modalAll').modal('show');
+            };
+            xhr.onerror = function() {
+                alert("Errore");
+            };
+            xhr.send();
+}
+function addInClass(idClass)
+{
+    
+    document.getElementById('modalBody').innerHTML ='<form class="form-signin" id="form">'+
+            '    <select type="text" id="inputStudent" class="form-control" >'+
+        '</form>';
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", './API/students.php', true);
+        xhr.onload = function() {
+            var data = JSON.parse(xhr.response);
+            let option;
+
+            for (var i = 0; i < data.length; i++)
+            {
+                option = document.createElement('option');
+                option.text = data[i].name +" "+ data[i].surname;
+                option.value = data[i].id;
+                document.getElementById("inputStudent").add(option);
+            }
+            
+            document.getElementById('modalBtn').innerHTML ="No";   
+             button = document.createElement("button");
+            button.innerHTML="Si";
+            button.className="btn btn-success";
+            button.type ="button";
+            button.id="modalBtnOk";
+            button.addEventListener("click", function()
+            {
+                var student =  document.getElementById("inputStudent").value;
+                var _class = idClass;
+                var obj = { student: student, _class: _class};
+                var myJSON = JSON.stringify(obj);
+                $('#modalAll').modal('hide');
+                addInClassCall(myJSON);
+                
+
+            });
+            $('#modalAll').on('hidden.bs.modal', function (e) {
+                $("#modalBtnOk" ).remove();
+                //document.getElementById('modalBtn').removeEventListener('click',list());
+            })
+            document.getElementById("modalFooter").appendChild(button);
+
+            $('#modalAll').modal('show');
+
+        };
+        xhr.onerror = function() {
+            alert("Errore");
+        };
+        xhr.send();
+        
+        
+            
+            
+}
+function addInClassCall(json)
+{
+    var xhr = new XMLHttpRequest();
+
+    xhr.open("POST", './API/studentsClasses.php', true);
+    xhr.onload =loadPage(2);
+    xhr.onerror = function()
+    {
+        alert("Errore");
+    };
+
+    xhr.send(json);
+}
+function remStudent(id,idClass)
+{
+    var xhr = new XMLHttpRequest();
+    xhr.open("DELETE", "http://localhost/work/phpServer/API/studentsClasses.php/"+id, true);
+    xhr.onload = function() {
+        alert('ok');
+        //seeStudent(idClass);
+    };
+    xhr.onerror = function() {
+        alert("Errore");
+    };
+    xhr.send();
 }
 
 function edit(id, call) {
