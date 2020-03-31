@@ -25,132 +25,22 @@ function loadIndex() {
     appContainer.innerHTML = '<table class="table"><tbody><tr><td><button class="btn btn-primary" onclick="loadPage(1)" type="button">Alunni</button></td><td><button class="btn btn-success" onclick="loadPage(2)" type="button">Classi</button></td></tr></tbody></table>';
 }
 
-
-function get(call) {
-    var getUrl;
-    var id = document.getElementById("input").value;
+function Delete(id, call) {
     switch (call) {
         case 1:
-            getUrl = 'http://192.168.1.27/phpServer/API/students.php';
+            getUrl = 'http://localhost/work/phpServer/API/students.php/' + id;
             break;
         case 2:
-            getUrl = 'http://192.168.1.27/phpServer/API/classes.php';
+            getUrl = 'http://localhost/work/phpServer/API/classes.php/' + id;
             break;
         case 3:
-            getUrl = 'http://192.168.1.27/phpServer/API/studentsClasses.php';
-            break;
-    }
-
-
-    if (id != "")
-        getUrl += "/" + id;
-
-    appResult.innerHTML = "";
-    var table = document.createElement("table");
-    var thead = document.createElement("thead");
-    table.setAttribute("class", "table");
-    thead.className = "thead-dark";
-    table.appendChild(thead);
-    appResult.appendChild(table);
-
-    var tr = document.createElement('tr');
-    tr.innerHTML =
-        '<th>id</th>' +
-        '<th>Sezione</th>';
-    thead.appendChild(tr);
-
-
-
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", getUrl, true);
-    xhr.onload = function() {
-        var data = JSON.parse(xhr.response);
-
-        let tr, td, button;
-        if (id != "") {
-            tr = document.createElement('tr');
-            tr.innerHTML =
-                '<td>' + data.id + '</td>' +
-                '<td>' + data.section + '</td>'
-
-
-            td = document.createElement("td");
-            button = document.createElement("button");
-            table.appendChild(tr);
-        } else {
-            for (var i = 0; i < data.length; i++) {
-                tr = document.createElement('tr');
-
-                tr.innerHTML = '<td>' + data[i].id + '</td>' +
-                    '<td>' + data[i].section + '</td>'
-
-
-                td = document.createElement("td");
-                button = document.createElement("button");
-                table.appendChild(tr);
-            }
-        }
-    };
-    xhr.onerror = function() {
-        alert("Errore");
-    };
-    xhr.send();
-}
-
-function post(call) {
-    var myJSON
-    switch (call) {
-        case 1:
-            getUrl = 'http://192.168.1.27/phpServer/API/students.php';
-            var name = document.getElementById("nome").value;
-            var surname = document.getElementById("cognome").value;
-            var taxCode = document.getElementById("taxCode").value;
-            var sidiCode = document.getElementById("sidiCode").value;
-            var obj = { section: section, year: year };
-            myJSON = JSON.stringify(obj);
-            break;
-        case 2:
-            getUrl = 'http://192.168.1.27/phpServer/API/classes.php';
-            var section = document.getElementById("sezione").value;
-            var year = document.getElementById("anno").value;
-            var obj = { section: section, year: year };
-            myJSON = JSON.stringify(obj);
-            break;
-        case 3:
-            getUrl = 'http://192.168.1.27/phpServer/API/studentsClasses.php';
-            break;
-    }
-
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", getUrl, true);
-    xhr.onload = function() {
-        alert(xhr.response);
-    };
-    xhr.onerror = function() {
-        alert("Errore");
-    };
-    xhr.send(myJSON);
-}
-
-
-function del(call) {
-    var myJSON
-    var id = document.getElementById("idDel").value;
-    switch (call) {
-        case 1:
-            getUrl = 'http://192.168.1.27/phpServer/API/students.php/' + id;
-            break;
-        case 2:
-            getUrl = 'http://192.168.1.27/phpServer/API/classes.php/' + id;
-            break;
-        case 3:
-            getUrl = 'http://192.168.1.27/phpServer/API/studentsClasses.php/' + id;
+            getUrl = 'http://localhost/work/phpServer/API/studentsClasses.php/' + id;
             break;
     }
     var xhr = new XMLHttpRequest();
     xhr.open("DELETE", getUrl, true);
     xhr.onload = function() {
-        alert(xhr.response);
+        loadPage(call);
     };
     xhr.onerror = function() {
         alert("Errore");
@@ -159,9 +49,6 @@ function del(call) {
 }
 
 function loadPage(call) {
-    var temp = "Classe";
-    if (call == 1)
-        temp = "alunno";
     let title, button;
     appTitle.innerHTML = "";
 
@@ -171,95 +58,412 @@ function loadPage(call) {
             loadIndex();
         });
     title.className = "clickable text-black";
-    title.innerHTML = "Home";
+    title.innerHTML = "<- Back";
     appTitle.appendChild(title);
 
-    appContainer.innerHTML = "";
-    appContainer.innerHTML = '<table class="table">' +
-        '<tbody><tr><td><button class="btn btn-primary" onclick="clickGet(' + call + ')" type="button">Visualizza</button></td>' +
-        '<td><button class="btn btn-success" onclick="clickPost(' + call + ')" type="button">Inserisci ' + temp + '</button></td>' +
-        '<td><button class="btn btn-info" onclick="clickDelete(' + call + ')" type="button">Cancella ' + temp + '</button></td>' +
-        '<td><button class="btn btn-info" onclick="clickGet(' + call + ')" type="button">Modifica ' + temp + '</button></td>' +
-        '<td><button class="btn btn-info" onclick="clickGet(' + call + ')" type="button">Put</button></td>' +
-        '</tr></tbody></table>';
+    appTitle.innerHTML += "<br>"
+    title = document.createElement("a");
+    title.addEventListener("click",
+        function() {
+            loadPage(call);
+        });
+    title.className = "clickable text-black";
+    title.innerHTML = "Refresh";
+    appTitle.appendChild(title);
 
+    switch (call) {
+        case 1:
+
+            appContainer.innerHTML = "";
+
+            var table = document.createElement("table");
+            var thead = document.createElement("thead");
+            table.setAttribute("class", "table");
+            thead.className = "thead-dark";
+            table.appendChild(thead);
+            appContainer.appendChild(table);
+
+            var tr = document.createElement('tr');
+            tr.innerHTML =
+                '<th>id</th>' +
+                '<th>Nome</th>' +
+                '<th>Cognome</th>' +
+                '<th>Sidi Code</th>' +
+                '<th>Tax Code</th>' +
+                '<th>Delete</th>'+
+                '<th>Edit</th>';
+            thead.appendChild(tr);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", './API/students.php', true);
+            xhr.onload = function() {
+                var data = JSON.parse(xhr.response);
+                let tr, td, button;
+
+                for (var i = 0; i < data.length; i++) {
+                    tr = document.createElement('tr');
+                    tr.innerHTML =
+                        '<td>' + data[i].id + '</td>' +
+                        '<td>' + data[i].name + '</td>' +
+                        '<td>' + data[i].surname + '</td>' +
+                        '<td>' + data[i].sidi_code + '</td>' +
+                        '<td>' + data[i].tax_code + '</td>';
+                
+                        td = document.createElement("td");
+                        button = document.createElement("button");
+                    let id = data[i].id;
+
+
+                    button.className = "btn btn-danger";
+                    button.addEventListener("click",
+                        function() {
+                            Delete(id, call);
+                        });
+                    button.innerHTML = "x";
+                    td.appendChild(button);
+                    tr.appendChild(td);
+
+                    td = document.createElement("td");
+                    button = document.createElement("button");
+                    
+                    button.className = "btn btn-success";                 
+                    button.addEventListener("click",
+                                            function()
+                                            {
+                                                edit(id,call);
+                                            });
+                    
+                    button.innerHTML="Edit";                       
+                    td.appendChild(button);
+                    tr.appendChild(td);
+                    table.appendChild(tr);
+                }
+                button = document.createElement("button");
+            button.innerHTML="Add +";
+            button.className="btn btn-success";
+            button.type ="button";
+            button.id="btnAdd";
+            button.addEventListener("click", function()
+            {
+                add(call);
+            });
+            appContainer.appendChild(button);
+
+            };
+            xhr.onerror = function() {
+                alert("Errore");
+            };
+            xhr.send();
+            break;
+
+        case 2:
+            appContainer.innerHTML = "";
+
+            var table = document.createElement("table");
+            var thead = document.createElement("thead");
+            table.setAttribute("class", "table");
+            thead.className = "thead-dark";
+            table.appendChild(thead);
+            appContainer.appendChild(table);
+
+            var tr = document.createElement('tr');
+            tr.innerHTML =
+                '<th>id</th>' +
+                '<th>year</th>' +
+                '<th>Section</th>' +
+                '<th>Delete</th>'+
+                '<th>Edit</th>';
+            thead.appendChild(tr);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", './API/classes.php', true);
+            xhr.onload = function() {
+                var data = JSON.parse(xhr.response);
+                let tr, td, button;
+
+                for (var i = 0; i < data.length; i++) {
+                    tr = document.createElement('tr');
+                    tr.innerHTML =
+                        '<td>' + data[i].id + '</td>' +
+                        '<td>' + data[i].year + '</td>' +
+                        '<td>' + data[i].section + '</td>';
+                        td = document.createElement("td");
+                        button = document.createElement("button");
+                    let id = data[i].id;
+
+
+                    button.className = "btn btn-danger";
+                    button.addEventListener("click",
+                        function() {
+                            Delete(id, call);
+                        });
+                    button.innerHTML = "x";
+                    td.appendChild(button);
+                    tr.appendChild(td);
+
+                    td = document.createElement("td");
+                    button = document.createElement("button");
+                    
+                    button.className = "btn btn-success";                 
+                    button.addEventListener("click",
+                                            function()
+                                            {
+                                                edit(id, call);
+                                            });
+                    
+                    button.innerHTML="Edit";                       
+                    td.appendChild(button);
+                    tr.appendChild(td);
+                    table.appendChild(tr);
+                }
+            button = document.createElement("button");
+            button.innerHTML="Add +";
+            button.className="btn btn-success";
+            button.type ="button";
+            button.id="btnAdd";
+            button.addEventListener("click", function()
+            {
+                add(call);
+            });
+            appContainer.appendChild(button);
+
+            };
+            xhr.onerror = function() {
+                alert("Errore");
+            };
+            xhr.send();
+            break;
+    }
 }
 
-function clickGet(call) {
-    appContainer.innerHTML = "";
-    let button;
+function edit(id, call) {
+    document.getElementById('modalTitle').innerHTML ="Modifica";
+    let button
 
+    switch (call) {
+        
+        case 1:
+            
+            getUrl = 'http://localhost/work/phpServer/API/students.php/' + id;
+            
+            
+            document.getElementById('modalBody').innerHTML ='<form class="form-signin" method="GET" id="form">'+
+            '<h1 class="h3 mb-3 font-weight-normal">Edit studets</h1>'+
+            '<label for="inputName" >Name</label>'+
+            '    <input type="text" id="inputName" class="form-control"  name="email">'+
+            '<label for="inputSurname" >Surname</label>'+
+            '    <input type="text" id="inpuSurname" class="form-control" >'+
+            '<label for="inputTaxcode" >Sidicode</label>'+
+            '    <input type="text" id="inputSidicode" class="form-control"  >'+
+            '<label for="inputSidicode" >Taxcode</label>'+
+            '    <input type="text" id="inputTaxcode" class="form-control" >'+
+        '</form>';
+            document.getElementById('modalBtn').innerHTML ="No";
+    
+             button = document.createElement("button");
+            button.innerHTML="Si";
+            button.className="btn btn-success";
+            button.type ="button";
+            button.id="modalBtnOk";
+            button.addEventListener("click", function()
+            {
+                var name = document.getElementById("inputName").value;
+                var surname = document.getElementById("inpuSurname").value;
+                var sidiCode = document.getElementById("inputSidicode").value;
+                var taxCode = document.getElementById("inputTaxcode").value;
+                var obj = { name: name, surname: surname, sidiCode: sidiCode, taxCode: taxCode};
+                var myJSON = JSON.stringify(obj);
+                $('#modalAll').modal('hide');
+                editCall(id,call,myJSON);
+                
 
-    button = document.createElement("button");
-    button.addEventListener("click",
-        function() {
-            get(call);
-        });
-    button.className = "btn btn-primary";
-    button.innerHTML = "Get";
-    appContainer.appendChild(button);
-    button = null;
-    button = document.createElement("input");
-    button.id = "input";
-    appContainer.appendChild(button);
-    //appContainer.innerHTML += '<div id="result"/>';
+            });
+            $('#modalAll').on('hidden.bs.modal', function (e) {
+                $("#modalBtnOk" ).remove();
+                //document.getElementById('modalBtn').removeEventListener('click',list());
+            })
+            document.getElementById("modalFooter").appendChild(button);
+            $('#modalAll').modal('show');
+            
+            
+            break;
+        case 2:
+            getUrl = 'http://localhost/work/phpServer/API/students.php/' + id;
+            
+            document.getElementById('modalBody').innerHTML ='<form class="form-signin" method="GET" id="form">'+
+            '<h1 class="h3 mb-3 font-weight-normal">Edit class</h1>'+
+            '<label for="inputYear" >Year</label>'+
+            '    <input type="text" id="inputYear" class="form-control"  name="email">'+
+            '<label for="inputSection" >Section</label>'+
+            '    <input type="text" id="inputSection" class="form-control" >'+
+        '</form>';
+            document.getElementById('modalBtn').innerHTML ="No";
+    
+             button = document.createElement("button");
+            button.innerHTML="Si";
+            button.className="btn btn-success";
+            button.type ="button";
+            button.id="modalBtnOk";
+            button.addEventListener("click", function()
+            {
+                var year = document.getElementById("inputYear").value;
+                var section = document.getElementById("inputSection").value;
+                var obj = { year: year, section: section};
+                var myJSON = JSON.stringify(obj);
+                $('#modalAll').modal('hide');
+                editCall(id,call,myJSON);
+                
+
+            });
+            $('#modalAll').on('hidden.bs.modal', function (e) {
+                $("#modalBtnOk" ).remove();
+                //document.getElementById('modalBtn').removeEventListener('click',list());
+            })
+            document.getElementById("modalFooter").appendChild(button);
+            $('#modalAll').modal('show');
+            break;
+        case 3:
+            getUrl = 'http://localhost/work/phpServer/API/studentsClasses.php/' + id;
+            break;
+    }
+}
+function editCall(id,call,json)
+{
+    switch (call) {
+        case 1:
+            getUrl = 'http://localhost/work/phpServer/API/students.php/' + id;
+            break;
+        case 2:
+            getUrl = 'http://localhost/work/phpServer/API/classes.php/' + id;
+            break;
+        case 3:
+            getUrl = 'http://localhost/work/phpServer/API/studentsClasses.php/' + id;
+            break;
+    }
+    var xhr = new XMLHttpRequest();
+
+    xhr.open("PATCH", getUrl, false);
+    xhr.onload =loadPage(call);
+    xhr.onerror = function()
+    {
+        alert("Errore");
+    };
+
+    xhr.send(json);
 }
 
-function clickPost(call) {
-    appContainer.innerHTML = "";
-    let button;
+function add(call) {
+    document.getElementById('modalTitle').innerHTML ="Modifica";
+    let button
 
-    button = document.createElement("label");
-    button.innerHTML = "Nome classe";
-    appContainer.appendChild(button);
-    button = null;
-    button = document.createElement("input");
-    button.id = "sezione";
-    appContainer.appendChild(button);
-    button = null;
-    button = document.createElement("label");
-    button.innerHTML = "Anno classe";
-    appContainer.appendChild(button);
-    button = null;
-    button = document.createElement("input");
-    button.id = "anno";
-    appContainer.appendChild(button);
+    switch (call) {
+        
+        case 1:
+            
+            getUrl = 'http://localhost/work/phpServer/API/students.php/';
+            
+            
+            document.getElementById('modalBody').innerHTML ='<form class="form-signin" id="form">'+
+            '<h1 class="h3 mb-3 font-weight-normal">Add studets</h1>'+
+            '<label for="inputName" >Name</label>'+
+            '    <input type="text" id="inputName" class="form-control"  name="email">'+
+            '<label for="inputSurname" >Surname</label>'+
+            '    <input type="text" id="inpuSurname" class="form-control" >'+
+            '<label for="inputTaxcode" >Sidicode</label>'+
+            '    <input type="text" id="inputSidicode" class="form-control"  >'+
+            '<label for="inputSidicode" >Taxcode</label>'+
+            '    <input type="text" id="inputTaxcode" class="form-control" >'+
+        '</form>';
+            document.getElementById('modalBtn').innerHTML ="No";
+    
+             button = document.createElement("button");
+            button.innerHTML="Si";
+            button.className="btn btn-success";
+            button.type ="button";
+            button.id="modalBtnOk";
+            button.addEventListener("click", function()
+            {
+                var name = document.getElementById("inputName").value;
+                var surname = document.getElementById("inpuSurname").value;
+                var sidiCode = document.getElementById("inputSidicode").value;
+                var taxCode = document.getElementById("inputTaxcode").value;
+                var obj = { name: name, surname: surname, sidiCode: sidiCode, taxCode: taxCode};
+                var myJSON = JSON.stringify(obj);
+                $('#modalAll').modal('hide');
+                addCall(call,myJSON);
+                
 
-    button = null;
-    button = document.createElement("button");
-    button.addEventListener("click",
-        function() {
-            post(call);
-        });
-    button.className = "btn btn-primary";
-    button.innerHTML = "Aggiungi";
-    appContainer.appendChild(button);
+            });
+            $('#modalAll').on('hidden.bs.modal', function (e) {
+                $("#modalBtnOk" ).remove();
+                //document.getElementById('modalBtn').removeEventListener('click',list());
+            })
+            document.getElementById("modalFooter").appendChild(button);
+            $('#modalAll').modal('show');
+            
+            
+            break;
+        case 2:
+            getUrl = 'http://localhost/work/phpServer/API/students.php/';
+            
+            document.getElementById('modalBody').innerHTML ='<form class="form-signin" id="form">'+
+            '<h1 class="h3 mb-3 font-weight-normal">Add class</h1>'+
+            '<label for="inputYear" >Year</label>'+
+            '    <input type="text" id="inputYear" class="form-control"  name="email">'+
+            '<label for="inputSection" >Section</label>'+
+            '    <input type="text" id="inputSection" class="form-control" >'+
+        '</form>';
+            document.getElementById('modalBtn').innerHTML ="No";
+    
+             button = document.createElement("button");
+            button.innerHTML="Si";
+            button.className="btn btn-success";
+            button.type ="button";
+            button.id="modalBtnOk";
+            button.addEventListener("click", function()
+            {
+                var year = document.getElementById("inputYear").value;
+                var section = document.getElementById("inputSection").value;
+                var obj = { year: year, section: section};
+                var myJSON = JSON.stringify(obj);
+                $('#modalAll').modal('hide');
+                addCall(call,myJSON);
+                
 
-    //appContainer.innerHTML += '<div id="result"/>';
+            });
+            $('#modalAll').on('hidden.bs.modal', function (e) {
+                $("#modalBtnOk" ).remove();
+                //document.getElementById('modalBtn').removeEventListener('click',list());
+            })
+            document.getElementById("modalFooter").appendChild(button);
+            $('#modalAll').modal('show');
+            break;
+        case 3:
+            getUrl = 'http://localhost/work/phpServer/API/studentsClasses.php/' + id;
+            break;
+    }
 }
+function addCall(call,json)
+{
+    switch (call) {
+        case 1:
+            getUrl = 'http://localhost/work/phpServer/API/students.php/';
+            break;
+        case 2:
+            getUrl = 'http://localhost/work/phpServer/API/classes.php/';
+            break;
+        case 3:
+            getUrl = 'http://localhost/work/phpServer/API/studentsClasses.php/';
+            break;
+    }
+    var xhr = new XMLHttpRequest();
 
-function clickDelete(call) {
-    appContainer.innerHTML = "";
-    let button;
+    xhr.open("POST", getUrl, false);
+    xhr.onload =loadPage(call);
+    xhr.onerror = function()
+    {
+        alert("Errore");
+    };
 
-
-    button = document.createElement("label");
-    button.innerHTML = "Id classe";
-    appContainer.appendChild(button);
-    button = null;
-
-    button = document.createElement("input");
-    button.id = "idDel";
-    appContainer.appendChild(button);
-    button = null;
-    button = document.createElement("button");
-    button.addEventListener("click",
-        function() {
-            del(call);
-        });
-    button.className = "btn btn-primary";
-    button.innerHTML = "Get id";
-    appContainer.appendChild(button);
-
-    //appContainer.innerHTML += '<div id="result"/>';
+    xhr.send(json);
 }

@@ -35,8 +35,8 @@ switch($requestMethod) {
 
         $student->_name = $input["name"];
         $student->_surname = $input["surname"];
-        $student->_sidiCode = $input["sidicode"];
-        $student->_taxCode = $input["taxcode"];
+        $student->_sidiCode = $input["sidiCode"];
+        $student->_taxCode = $input["taxCode"];
 
         $data = $student->insert();
         $js_encode = json_encode(array('status'=>TRUE, 'studentInfo'=>$data), true);
